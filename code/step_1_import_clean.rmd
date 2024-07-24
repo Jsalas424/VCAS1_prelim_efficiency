@@ -1,0 +1,74 @@
+---
+title: "Import and Clean Data"
+author: "Jonathan Salas"
+date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+library(janitor)
+library(dplyr)
+knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
+```
+
+# Import the raw data - Point to the correct raw data directory
+
+```{r}
+raw_data_dir <-"data/raw/VCAS-I-rove_time.xlsx"
+```
+
+# Excel import
+
+## Import Subject Data
+```{r}
+raw_res <- read_excel(path = raw_data_dir,
+                      sheet = "results")
+```
+
+## Remove Empty Rows
+
+```{r}
+cleaned_res <- janitor::remove_empty(raw_res, which = "rows") |> select(-c(link_to_data, notes))
+```
+
+## Calculate derived statistics
+
+proc_vs_rove is procedure time (seconds) as a function of rove_time (seconds)
+rove_per_app is rove time (s) as a function of number of applications
+
+```{r}
+cleaned_res <- cleaned_res |>
+  mutate(
+    proc_vs_rove = round(procedure_time/rove_time,2),
+    rove_per_app = round(rove_time/num_applications)
+  ) 
+```
+
+# Save cleaned data
+
+```{r}
+save(cleaned_res, 
+     file = paste0("data/processed/cleaned_efficiency_stats.RData"))
+```
+
+# Version and Package Details
+
+```{r echo=F}
+paste(version$version.string, version$nickname)
+paste0(
+  "RStudio Version ",
+  rstudioapi::versionInfo()$version,
+  " ",
+  rstudioapi::versionInfo()$release_name
+) # RStudio Version
+subset(data.frame(sessioninfo::package_info()),
+       attached == TRUE,
+       c(package, loadedversion)) # Loaded Packages
+```
+a
+# When were these files last rewritten?
+k
+```{r}
+date()
+```
