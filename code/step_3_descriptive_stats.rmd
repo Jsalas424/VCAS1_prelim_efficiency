@@ -1,0 +1,140 @@
+---
+title: "Descriptive Statistics"
+author: "Jonathan Salas"
+date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document: 
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+#devtools::load_all("~/R_Projects/cv.tools")
+library(ggplot2)
+library(dplyr)
+knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
+```
+
+# Import - Point to the correct raw data directory
+
+```{r}
+raw_data_dir <-"data/processed/working_efficiency_stats.RData"
+```
+
+# Aesthetics
+
+```{r}
+blank.plot <- theme_bw() +
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(), #this theme section generates a blank canvas
+        panel.grid.minor = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.title = element_blank(),
+        legend.justification="top")
+```
+
+## load Subject Data
+```{r}
+load(raw_data_dir)
+```
+
+# Descriptive Statistics
+
+Analysis Plan:
+- histoplots of continuous variables - as of 7/30/24 this was useless to do, shows nothing at all due to small sample
+- loess plots of continuous variables; x-axis is each procedure aligned in termporal order
+- box plots
+- we do procedure time vs rove time "proc_vs_rove" 
+
+Hypotheses:
+
+1) rove_per_app and rove_vs_proc with x axis as patient number to hopefully show a decreasing trend for both; i.e., you can 
+  do lots of applications in a short period of time & ablation time is small relative to procedure time as the physician
+  becomes more comfortable with our system
+
+### Make Mapping Data
+
+Make temporary mapping data.
+
+```{r}
+# Make a procedure number column which is the patient id's numbered sequentially
+temp_map_dat <- cleaned_res |>
+  mutate(proc_num = seq_along(id))
+```
+
+## Procedure Time
+
+#### Line Plot
+
+```{r}
+ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_continuous(labels = temp_map_dat$proc_num, breaks = temp_map_dat$proc_num) +
+  coord_cartesian(ylim = c(0,max(temp_map_dat$procedure_time_min) + 30)) + 
+  xlab("Procedure Number") +
+  ylab("Procedure Time (min)") +
+  labs(caption = "Skin to skin time") +
+  blank.plot
+```
+
+#### Box Plots
+
+```{r}
+ggplot(data = temp_map_dat, aes(x = "", y = procedure_time_min)) +
+  geom_boxplot() +
+  geom_jitter(size = 5) + 
+  xlab("") +
+  ylab("Procedure Time (min)") +
+  labs(caption = "Skin to skin time") +
+  blank.plot
+```
+
+## Rove Time
+
+#### Line Plot
+
+```{r}
+ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_continuous(labels = temp_map_dat$proc_num, breaks = temp_map_dat$proc_num) +
+  coord_cartesian(ylim = c(0,max(temp_map_dat$rove_time_min) + 30)) + 
+  xlab("Procedure Number") +
+  ylab("Catheter Rove Time (min)") +
+  blank.plot
+```
+
+#### Box Plots
+
+```{r}
+ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
+  geom_boxplot() +
+  geom_jitter(size = 5) + 
+  xlab("") +
+  ylab("Catheter Rove Time (min)") +
+  labs(caption = "Represents sum procedure time spent performing ablation-related activities. ") +
+  blank.plot
+```
+
+# Save Results
+
+# Version and Package Details
+
+```{r echo=F}
+paste(version$version.string, version$nickname)
+paste0(
+  "RStudio Version ",
+  rstudioapi::versionInfo()$version,
+  " ",
+  rstudioapi::versionInfo()$release_name
+) # RStudio Version
+subset(data.frame(sessioninfo::package_info()),
+       attached == TRUE,
+       c(package, loadedversion)) # Loaded Packages
+```
+
+# When were these files last rewritten?
+
+```{r}
+date()
+```
