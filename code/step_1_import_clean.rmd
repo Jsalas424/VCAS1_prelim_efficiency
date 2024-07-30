@@ -32,24 +32,11 @@ raw_res <- read_excel(path = raw_data_dir,
 cleaned_res <- janitor::remove_empty(raw_res, which = "rows") |> select(-c(link_to_data, notes))
 ```
 
-## Calculate derived statistics
-
-proc_vs_rove is procedure time (seconds) as a function of rove_time (seconds)
-rove_per_app is rove time (s) as a function of number of applications
-
-```{r}
-cleaned_res <- cleaned_res |>
-  mutate(
-    proc_vs_rove = round(procedure_time/rove_time,2),
-    rove_per_app = round(rove_time/num_applications)
-  ) 
-```
-
 # Save cleaned data
 
 ```{r}
 save(cleaned_res, 
-     file = paste0("data/processed/cleaned_efficiency_stats.RData"))
+     file = paste0("data/processed/imported_efficiency_stats.RData"))
 ```
 
 # Version and Package Details
