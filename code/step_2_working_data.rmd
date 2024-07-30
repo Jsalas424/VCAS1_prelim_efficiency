@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(dplyr)
+library(stringr)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 ```
 
@@ -22,16 +23,39 @@ raw_data_dir <-"data/processed/imported_efficiency_stats.RData"
 load(raw_data_dir)
 ```
 
+# Remove Empty Rows 
+
+If the only thing populated is the ID, remove it
+
+```{r}
+#temp <- cleaned_res
+#cleaned_res <- janitor::remove_empty(temp[, -1], which = "rows") |>
+#  left_join(temp) |>
+#  relocate(id)
+```
+
+
+# Change Column Types
+
+## Remove leading "1-" from each id name and convert to numeric scale
+```{r}
+cleaned_res <- cleaned_res |>
+  mutate(id = as.numeric(str_remove(id, "^1-")))
+```
+
 ## Calculate derived statistics
 
-proc_vs_rove is procedure time (seconds) as a function of rove_time (seconds)
-rove_per_app is rove time (s) as a function of number of applications
+app_per_rove is how many applications we can get in within a minute of rove_time, bigger is better
+proc_vs_rove is ratio of procedure time to rove time, bigger is better. 
 
 ```{r}
 cleaned_res <- cleaned_res |>
   mutate(
-    proc_vs_rove = round(procedure_time/rove_time,2),
-    rove_per_app = round(rove_time/num_applications)
+    procedure_time_min = procedure_time/60,
+    rove_time_min = rove_time/60,
+    proc_vs_rove = procedure_time/rove_time,
+    app_per_rove = num_applications/rove_time_min,
+    across(where(is.numeric), round, 2)
   ) 
 ```
 
