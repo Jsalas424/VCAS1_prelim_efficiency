@@ -11,6 +11,12 @@ library(stringr)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 ```
 
+# Start with a clean slate
+
+```{r echo = F}
+rm(list = ls(all.names = TRUE))
+```
+
 # Import the raw data - Point to the correct raw data directory
 
 ```{r}
@@ -34,6 +40,14 @@ If the only thing populated is the ID, remove it
 #  relocate(id)
 ```
 
+# Exclude Patients
+
+Exclude 1-011, procedure was aborted for safety reasons 
+
+```{r}
+cleaned_res <- cleaned_res |>
+  filter(id != "1-011")
+```
 
 # Change Column Types
 
