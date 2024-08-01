@@ -1,13 +1,17 @@
 ---
 title: "Descriptive Statistics"
 author: "Jonathan Salas"
-date: "Last Updated 30 July, 2024"
+date: "Last Updated 01 August, 2024"
 output: 
   html_document: 
     df_print: kable
     fig_height: 6
     keep_md: true
 ---
+
+
+
+# Start with a clean slate
 
 
 
@@ -46,21 +50,21 @@ Make temporary mapping data.
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
-
-#### Box Plots
-
 ![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-## Rove Time
-
-#### Line Plot
+#### Box Plots
 
 ![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
-#### Box Plots
+## Ablation Time
+
+#### Line Plot
 
 ![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+#### Box Plots
+
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 # Save Results
 
@@ -88,5 +92,5 @@ Make temporary mapping data.
 
 
 ```
-## [1] "Tue Jul 30 11:44:30 2024"
+## [1] "Thu Aug  1 16:02:43 2024"
 ```

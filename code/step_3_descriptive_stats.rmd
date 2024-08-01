@@ -17,6 +17,12 @@ knitr::opts_chunk$set(echo = F)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 ```
 
+# Start with a clean slate
+
+```{r echo = F}
+rm(list = ls(all.names = TRUE))
+```
+
 # Import - Point to the correct raw data directory
 
 ```{r}
@@ -53,6 +59,19 @@ Hypotheses:
 1) rove_per_app and rove_vs_proc with x axis as patient number to hopefully show a decreasing trend for both; i.e., you can 
   do lots of applications in a short period of time & ablation time is small relative to procedure time as the physician
   becomes more comfortable with our system
+  
+## The numbers
+
+```{r}
+cleaned_res |>
+  summarise(
+    mean_proc_min = mean(procedure_time_min, na.rm=T),
+    sd_proc_min =sd(procedure_time_min, na.rm=T),
+    mean_abl_min =mean(rove_time_min, na.rm=T),
+    sd_abl_min =sd(rove_time_min, na.rm=T)
+  )
+```
+
 
 ### Make Mapping Data
 
@@ -70,14 +89,26 @@ temp_map_dat <- cleaned_res |>
 
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(size = 5, aes(color = factor(proc_num))) +
+  geom_smooth(span = 2, se = F) +
   scale_x_continuous(labels = temp_map_dat$proc_num, breaks = temp_map_dat$proc_num) +
   coord_cartesian(ylim = c(0,max(temp_map_dat$procedure_time_min) + 30)) + 
   xlab("Procedure Number") +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
-  blank.plot
+  coord_cartesian(ylim=c(0,450)) +
+  blank.plot +
+  theme(axis.text=element_text(size=40, face = "bold"),
+        axis.title=element_text(size=24,face="bold")) 
+
+ggsave("procedure_time_trend.png",
+       path = "figures",
+       scale = 1,
+       width = 28,
+       height = 21,
+       units = "cm",
+       dpi = "retina",
+       limitsize = F)
 ```
 
 #### Box Plots
@@ -85,26 +116,51 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = procedure_time_min)) +
   geom_boxplot() +
-  geom_jitter(size = 5) + 
+  geom_jitter(size = 5, aes(color = factor(proc_num))) + 
   xlab("") +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
-  blank.plot
+  blank.plot +
+  coord_cartesian(ylim=c(0,450)) +
+  theme(axis.text=element_text(size=40, face = "bold"),
+        axis.title=element_text(size=24,face="bold")) +
+  scale_y_continuous(position = "right")
+
+ggsave("procedure_time_boxplot.png",
+       path = "figures",
+       scale = 1,
+       width = 18,
+       height = 21,
+       units = "cm",
+       dpi = "retina",
+       limitsize = F)
 ```
 
-## Rove Time
+## Ablation Time
 
 #### Line Plot
 
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(size = 5, aes(color = factor(proc_num))) +
+  geom_smooth(span = 2, se = F) +
   scale_x_continuous(labels = temp_map_dat$proc_num, breaks = temp_map_dat$proc_num) +
   coord_cartesian(ylim = c(0,max(temp_map_dat$rove_time_min) + 30)) + 
   xlab("Procedure Number") +
-  ylab("Catheter Rove Time (min)") +
-  blank.plot
+  ylab("Ablation Time (min)") +
+  coord_cartesian(ylim=c(0,80)) +
+  blank.plot +
+  theme(axis.text=element_text(size=40, face = "bold"),
+        axis.title=element_text(size=24,face="bold")) 
+
+ggsave("ablation_time_trend.png",
+       path = "figures",
+       scale = 1,
+       width = 28,
+       height = 21,
+       units = "cm",
+       dpi = "retina",
+       limitsize = F)
 ```
 
 #### Box Plots
@@ -112,11 +168,24 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
   geom_boxplot() +
-  geom_jitter(size = 5) + 
+  geom_jitter(size = 5, aes(color = factor(proc_num))) + 
   xlab("") +
-  ylab("Catheter Rove Time (min)") +
+  ylab("Ablation Time (min)") +
   labs(caption = "Represents sum procedure time spent performing ablation-related activities. ") +
-  blank.plot
+  blank.plot +
+  coord_cartesian(ylim=c(0,80)) +
+  theme(axis.text=element_text(size=40, face = "bold"),
+        axis.title=element_text(size=24,face="bold")) +
+  scale_y_continuous(position = "right")
+
+ggsave("ablation_time_boxplot.png",
+       path = "figures",
+       scale = 1,
+       width = 18,
+       height = 21,
+       units = "cm",
+       dpi = "retina",
+       limitsize = F)
 ```
 
 # Save Results
