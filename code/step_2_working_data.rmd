@@ -20,7 +20,7 @@ rm(list = ls(all.names = TRUE))
 # Import the raw data - Point to the correct raw data directory
 
 ```{r}
-raw_data_dir <-"data/processed/imported_efficiency_stats.RData"
+raw_data_dir <- "data/processed/imported_efficiency_stats.RData"
 ```
 
 

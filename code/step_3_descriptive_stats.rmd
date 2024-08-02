@@ -9,7 +9,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 #devtools::load_all("~/R_Projects/cv.tools")
 library(ggplot2)
 library(dplyr)
@@ -26,7 +26,7 @@ rm(list = ls(all.names = TRUE))
 # Import - Point to the correct raw data directory
 
 ```{r}
-raw_data_dir <-"data/processed/working_efficiency_stats.RData"
+raw_data_dir <- "data/processed/working_efficiency_stats.RData"
 ```
 
 # Aesthetics
@@ -38,7 +38,7 @@ blank.plot <- theme_bw() +
         panel.grid.minor = element_blank(), 
         axis.line = element_line(colour = "black"),
         legend.title = element_blank(),
-        legend.justification="top")
+        legend.justification = "top")
 ```
 
 ## load Subject Data
@@ -65,10 +65,10 @@ Hypotheses:
 ```{r}
 cleaned_res |>
   summarise(
-    mean_proc_min = mean(procedure_time_min, na.rm=T),
-    sd_proc_min =sd(procedure_time_min, na.rm=T),
-    mean_abl_min =mean(rove_time_min, na.rm=T),
-    sd_abl_min =sd(rove_time_min, na.rm=T)
+    mean_proc_min = mean(procedure_time_min, na.rm = T),
+    sd_proc_min = sd(procedure_time_min, na.rm = T),
+    mean_abl_min = mean(rove_time_min, na.rm = T),
+    sd_abl_min = sd(rove_time_min, na.rm = T)
   )
 ```
 
@@ -87,7 +87,7 @@ temp_map_dat <- cleaned_res |>
 
 #### Line Plot
 
-```{r, warning=FALSE,message=FALSE,error=FALSE}
+```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
   geom_point(size = 5, aes(color = factor(proc_num))) +
   geom_smooth(span = 2, se = F) +
@@ -96,10 +96,10 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
   xlab("Procedure Number") +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
-  coord_cartesian(ylim=c(0,450)) +
+  coord_cartesian(ylim = c(0,450)) +
   blank.plot +
-  theme(axis.text=element_text(size=40, face = "bold"),
-        axis.title=element_text(size=24,face="bold")) 
+  theme(axis.text = element_text(size = 40, face = "bold"),
+        axis.title = element_text(size = 24,face ="bold")) 
 
 ggsave("procedure_time_trend.png",
        path = "figures",
@@ -121,9 +121,9 @@ ggplot(data = temp_map_dat, aes(x = "", y = procedure_time_min)) +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
   blank.plot +
-  coord_cartesian(ylim=c(0,450)) +
-  theme(axis.text=element_text(size=40, face = "bold"),
-        axis.title=element_text(size=24,face="bold")) +
+  coord_cartesian(ylim = c(0,450)) +
+  theme(axis.text = element_text(size = 40, face = "bold"),
+        axis.title = element_text(size = 24,face ="bold")) +
   scale_y_continuous(position = "right")
 
 ggsave("procedure_time_boxplot.png",
@@ -140,7 +140,7 @@ ggsave("procedure_time_boxplot.png",
 
 #### Line Plot
 
-```{r, warning=FALSE,message=FALSE,error=FALSE}
+```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
   geom_point(size = 5, aes(color = factor(proc_num))) +
   geom_smooth(span = 2, se = F) +
@@ -150,8 +150,8 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
   ylab("Ablation Time (min)") +
   coord_cartesian(ylim=c(0,80)) +
   blank.plot +
-  theme(axis.text=element_text(size=40, face = "bold"),
-        axis.title=element_text(size=24,face="bold")) 
+  theme(axis.text = element_text(size=40, face = "bold"),
+        axis.title = element_text(size=24,face = "bold")) 
 
 ggsave("ablation_time_trend.png",
        path = "figures",
@@ -165,7 +165,7 @@ ggsave("ablation_time_trend.png",
 
 #### Box Plots
 
-```{r, warning=FALSE,message=FALSE,error=FALSE}
+```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
   geom_boxplot() +
   geom_jitter(size = 5, aes(color = factor(proc_num))) + 
@@ -173,9 +173,9 @@ ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
   ylab("Ablation Time (min)") +
   labs(caption = "Represents sum procedure time spent performing ablation-related activities. ") +
   blank.plot +
-  coord_cartesian(ylim=c(0,80)) +
+  coord_cartesian(ylim = c(0,80)) +
   theme(axis.text=element_text(size=40, face = "bold"),
-        axis.title=element_text(size=24,face="bold")) +
+        axis.title=element_text(size=24,face = "bold")) +
   scale_y_continuous(position = "right")
 
 ggsave("ablation_time_boxplot.png",
@@ -192,7 +192,7 @@ ggsave("ablation_time_boxplot.png",
 
 # Version and Package Details
 
-```{r echo=F}
+```{r echo = F}
 paste(version$version.string, version$nickname)
 paste0(
   "RStudio Version ",
