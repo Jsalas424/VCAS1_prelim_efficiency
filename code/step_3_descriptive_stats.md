@@ -1,7 +1,7 @@
 ---
 title: "Descriptive Statistics"
 author: "Jonathan Salas"
-date: "Last Updated 01 August, 2024"
+date: "Last Updated 02 August, 2024"
 output: 
   html_document: 
     df_print: kable
@@ -39,6 +39,17 @@ Hypotheses:
 1) rove_per_app and rove_vs_proc with x axis as patient number to hopefully show a decreasing trend for both; i.e., you can 
   do lots of applications in a short period of time & ablation time is small relative to procedure time as the physician
   becomes more comfortable with our system
+  
+## The numbers
+
+<div class="kable-table">
+
+| mean_proc_min| sd_proc_min| mean_abl_min| sd_abl_min|
+|-------------:|-----------:|------------:|----------:|
+|      202.5714|    94.35899|     27.60625|   17.09456|
+
+</div>
+
 
 ### Make Mapping Data
 
@@ -50,21 +61,21 @@ Make temporary mapping data.
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 #### Box Plots
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 ## Ablation Time
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 #### Box Plots
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 # Save Results
 
@@ -92,5 +103,5 @@ Make temporary mapping data.
 
 
 ```
-## [1] "Thu Aug  1 16:02:43 2024"
+## [1] "Fri Aug  2 07:19:30 2024"
 ```
