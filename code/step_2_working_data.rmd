@@ -69,7 +69,7 @@ cleaned_res <- cleaned_res |>
     rove_time_min = rove_time/60,
     proc_vs_rove = procedure_time/rove_time,
     app_per_rove = num_applications/rove_time_min,
-    across(where(is.numeric), round, 2)
+    across(where(is.numeric), \(x) round(x, 2))
   ) 
 ```
 
