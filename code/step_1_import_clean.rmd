@@ -12,6 +12,12 @@ library(dplyr)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 ```
 
+# Start with a clean slate
+
+```{r echo = F}
+rm(list = ls(all.names = TRUE))
+```
+
 # Import the raw data - Point to the correct raw data directory
 
 ```{r}
@@ -53,9 +59,9 @@ subset(data.frame(sessioninfo::package_info()),
        attached == TRUE,
        c(package, loadedversion)) # Loaded Packages
 ```
-a
+
 # When were these files last rewritten?
-k
+
 ```{r}
 date()
 ```
