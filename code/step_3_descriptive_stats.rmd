@@ -167,7 +167,7 @@ ggsave("ablation_time_trend.png",
 
 ```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size=-1) +
   geom_jitter(size = 5, aes(color = factor(proc_num))) + 
   xlab("") +
   ylab("Ablation Time (min)") +
