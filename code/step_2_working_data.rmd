@@ -95,6 +95,12 @@ subset(data.frame(sessioninfo::package_info()),
        c(package, loadedversion)) # Loaded Packages
 ```
 
+# Detach Packages before moving on
+
+```{r}
+invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
+```
+
 # When were these files last rewritten?
 
 ```{r}
