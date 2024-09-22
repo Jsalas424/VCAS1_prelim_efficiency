@@ -1,7 +1,7 @@
 ---
 title: "Descriptive Statistics"
 author: "Jonathan Salas"
-date: "Last Updated 02 August, 2024"
+date: "Last Updated 22 September, 2024"
 output: 
   html_document: 
     df_print: kable
@@ -44,9 +44,9 @@ Hypotheses:
 
 <div class="kable-table">
 
-| mean_proc_min| sd_proc_min| mean_abl_min| sd_abl_min|
-|-------------:|-----------:|------------:|----------:|
-|      202.5714|    94.35899|     27.60625|   17.09456|
+| mean_proc_min| sd_proc_min| mean_abl_min| sd_abl_min| mean_irrigation| sd_irrigation|
+|-------------:|-----------:|------------:|----------:|---------------:|-------------:|
+|      229.8571|    84.86937|      32.5875|   18.87275|             573|      387.6257|
 
 </div>
 
@@ -66,8 +66,7 @@ Make temporary mapping data.
 #### Box Plots
 
 ![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
-## Ablation Time
+## Irrigation Delivered
 
 #### Line Plot
 
@@ -76,6 +75,16 @@ Make temporary mapping data.
 #### Box Plots
 
 ![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+## Ablation Time
+
+#### Line Plot
+
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+#### Box Plots
+
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 # Save Results
 
@@ -99,9 +108,13 @@ Make temporary mapping data.
 
 </div>
 
+# Detach Packages before moving on
+
+
+
 # When were these files last rewritten?
 
 
 ```
-## [1] "Fri Aug  2 10:34:57 2024"
+## [1] "Sun Sep 22 09:41:22 2024"
 ```
