@@ -15,7 +15,6 @@ knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 # Start with a clean slate
 
 ```{r echo = F}
-invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
 rm(list = ls(all.names = TRUE)) # Remove all starting code
 ```
 
@@ -59,6 +58,12 @@ paste0(
 subset(data.frame(sessioninfo::package_info()),
        attached == TRUE,
        c(package, loadedversion)) # Loaded Packages
+```
+
+# Detach Packages before moving on
+
+```{r}
+invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
 ```
 
 # When were these files last rewritten?
