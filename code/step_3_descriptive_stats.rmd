@@ -139,7 +139,8 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = irrigation_delivered)) +
   coord_cartesian(ylim = c(0,max(temp_map_dat$procedure_time_min) + 30)) + 
   xlab("Procedure Number") +
   ylab("Irrigation Delivered (mL)") +
-  labs(caption = "Catheter Dwell Time * 6mL/min") +
+  labs(caption = "Catheter Dwell Time * 6 mL/min
+       Data available for 7 procedures") +
   coord_cartesian(ylim = c(0,1000)) +
   theme_cowplot(12) +
   theme(axis.text = element_text(size = 40, face = "bold"),

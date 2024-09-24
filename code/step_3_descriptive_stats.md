@@ -1,7 +1,7 @@
 ---
 title: "Descriptive Statistics"
 author: "Jonathan Salas"
-date: "Last Updated 22 September, 2024"
+date: "Last Updated 24 September, 2024"
 output: 
   html_document: 
     df_print: kable
@@ -16,10 +16,6 @@ output:
 
 
 # Import - Point to the correct raw data directory
-
-
-
-# Aesthetics
 
 
 
@@ -46,7 +42,7 @@ Hypotheses:
 
 | mean_proc_min| sd_proc_min| mean_abl_min| sd_abl_min| mean_irrigation| sd_irrigation|
 |-------------:|-----------:|------------:|----------:|---------------:|-------------:|
-|      229.8571|    84.86937|      32.5875|   18.87275|             573|      387.6257|
+|      229.8571|    84.86937|      32.5875|   18.87275|        398.5714|      192.4383|
 
 </div>
 
@@ -61,30 +57,30 @@ Make temporary mapping data.
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 #### Box Plots
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 ## Irrigation Delivered
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 #### Box Plots
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 ## Ablation Time
 
 #### Line Plot
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 #### Box Plots
 
-![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](step_3_descriptive_stats_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 # Save Results
 
@@ -103,6 +99,7 @@ Make temporary mapping data.
 
 |        |package |loadedversion |
 |:-------|:-------|:-------------|
+|cowplot |cowplot |1.1.3         |
 |dplyr   |dplyr   |1.1.4         |
 |ggplot2 |ggplot2 |3.5.1         |
 
@@ -116,5 +113,5 @@ Make temporary mapping data.
 
 
 ```
-## [1] "Sun Sep 22 09:52:54 2024"
+## [1] "Tue Sep 24 09:25:33 2024"
 ```
