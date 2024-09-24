@@ -43,10 +43,12 @@ If the only thing populated is the ID, remove it
 # Exclude Patients
 
 Exclude 1-011, procedure was aborted for safety reasons 
+Drop 1-010 dwell time data because this is just catheter in/out and doesn't account for all the times we actually swap the catheter in and out
 
 ```{r}
 cleaned_res <- cleaned_res |>
-  filter(id != "1-011")
+  filter(id != "1-011") |> 
+  mutate(dwell_time = replace(dwell_time, id == "1-010", NA))
 ```
 
 # Change Column Types
