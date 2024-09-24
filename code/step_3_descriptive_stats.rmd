@@ -12,6 +12,7 @@ output:
 ```{r setup, include = FALSE}
 #devtools::load_all("~/R_Projects/cv.tools")
 library(ggplot2)
+library(cowplot)
 library(dplyr)
 knitr::opts_chunk$set(echo = F)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
@@ -27,18 +28,6 @@ rm(list = ls(all.names = TRUE))
 
 ```{r}
 raw_data_dir <- "data/processed/working_efficiency_stats.RData"
-```
-
-# Aesthetics
-
-```{r}
-blank.plot <- theme_bw() +
-  theme(panel.border = element_blank(), 
-        panel.grid.major = element_blank(), #this theme section generates a blank canvas
-        panel.grid.minor = element_blank(), 
-        axis.line = element_line(colour = "black"),
-        legend.title = element_blank(),
-        legend.justification = "top")
 ```
 
 ## load Subject Data
@@ -100,7 +89,7 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = procedure_time_min)) +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
   coord_cartesian(ylim = c(0,450)) +
-  blank.plot +
+  theme_cowplot(12) +
   theme(axis.text = element_text(size = 40, face = "bold"),
         axis.title = element_text(size = 24,face ="bold")) 
 
@@ -123,7 +112,7 @@ ggplot(data = temp_map_dat, aes(x = "", y = procedure_time_min)) +
   xlab("") +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
-  blank.plot +
+  theme_cowplot(12) +
   coord_cartesian(ylim = c(0,450)) +
   theme(axis.text = element_text(size = 40, face = "bold"),
         axis.title = element_text(size = 24,face ="bold")) +
@@ -144,15 +133,15 @@ ggsave("procedure_time_boxplot.png",
 
 ```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = proc_num, y = irrigation_delivered)) +
-  geom_point(size = 5, aes(color = factor(proc_num))) +
+  geom_point(size = 5, aes(color = factor(id))) +
   geom_smooth(span = 2, se = F) +
   scale_x_continuous(labels = temp_map_dat$proc_num, breaks = temp_map_dat$proc_num) +
   coord_cartesian(ylim = c(0,max(temp_map_dat$procedure_time_min) + 30)) + 
   xlab("Procedure Number") +
   ylab("Irrigation Delivered (mL)") +
   labs(caption = "Catheter Dwell Time * 6mL/min") +
-  coord_cartesian(ylim = c(0,1500)) +
-  blank.plot +
+  coord_cartesian(ylim = c(0,1000)) +
+  theme_cowplot(12) +
   theme(axis.text = element_text(size = 40, face = "bold"),
         axis.title = element_text(size = 24,face ="bold")) 
 
@@ -171,12 +160,12 @@ ggsave("irrigation_delivered_trend.png",
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = irrigation_delivered)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(size = 5, aes(color = factor(proc_num))) + 
+  geom_jitter(size = 5, aes(color = factor(id))) + 
   xlab("") +
   ylab("Procedure Time (min)") +
   ylab("Irrigation Delivered (mL)") +
-  blank.plot +
-  coord_cartesian(ylim = c(0,1500)) +
+  theme_cowplot(12) +
+  coord_cartesian(ylim = c(0,1000)) +
   theme(axis.text = element_text(size = 40, face = "bold"),
         axis.title = element_text(size = 24,face ="bold")) +
   scale_y_continuous(position = "right")
@@ -204,7 +193,7 @@ ggplot(data = temp_map_dat, aes(x = proc_num, y = rove_time_min)) +
   xlab("Procedure Number") +
   ylab("Ablation Time (min)") +
   coord_cartesian(ylim=c(0,80)) +
-  blank.plot +
+  theme_cowplot(12) +
   theme(axis.text = element_text(size=40, face = "bold"),
         axis.title = element_text(size=24,face = "bold")) 
 
@@ -227,7 +216,7 @@ ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
   xlab("") +
   ylab("Ablation Time (min)") +
   labs(caption = "Represents sum procedure time spent performing ablation-related activities. ") +
-  blank.plot +
+  theme_cowplot(12) +
   coord_cartesian(ylim = c(0,80)) +
   theme(axis.text=element_text(size=40, face = "bold"),
         axis.title=element_text(size=24,face = "bold")) +
