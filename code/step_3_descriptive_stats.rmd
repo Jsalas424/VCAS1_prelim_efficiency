@@ -31,6 +31,7 @@ raw_data_dir <- "data/processed/working_efficiency_stats.RData"
 ```
 
 ## load Subject Data
+
 ```{r}
 load(raw_data_dir)
 ```
@@ -108,7 +109,7 @@ ggsave("procedure_time_trend.png",
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = procedure_time_min)) +
   geom_boxplot() +
-  geom_jitter(size = 5, aes(color = factor(proc_num))) + 
+  geom_point(size = 5, aes(color = factor(proc_num)), position = position_jitter(seed = 42494)) +
   xlab("") +
   ylab("Procedure Time (min)") +
   labs(caption = "Skin to skin time") +
@@ -161,7 +162,7 @@ ggsave("irrigation_delivered_trend.png",
 ```{r, warning=FALSE,message=FALSE,error=FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = irrigation_delivered)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(size = 5, aes(color = factor(id))) + 
+  geom_point(size = 5, aes(color = factor(id)), position = position_jitter(seed = 42494)) +
   xlab("") +
   ylab("Procedure Time (min)") +
   ylab("Irrigation Delivered (mL)") +
@@ -213,7 +214,7 @@ ggsave("ablation_time_trend.png",
 ```{r, warning = FALSE,message = FALSE,error = FALSE}
 ggplot(data = temp_map_dat, aes(x = "", y = rove_time_min)) +
   geom_boxplot(outlier.size=-1) +
-  geom_jitter(size = 5, aes(color = factor(proc_num))) + 
+  geom_point(size = 5, aes(color = factor(proc_num)), position = position_jitter(seed = 42494)) +
   xlab("") +
   ylab("Ablation Time (min)") +
   labs(caption = "Represents sum procedure time spent performing ablation-related activities. ") +

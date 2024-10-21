@@ -1,7 +1,7 @@
 ---
 title: "Descriptive Statistics"
 author: "Jonathan Salas"
-date: "Last Updated 24 September, 2024"
+date: "Last Updated 21 October, 2024"
 output: 
   html_document: 
     df_print: kable
@@ -20,6 +20,7 @@ output:
 
 
 ## load Subject Data
+
 
 
 # Descriptive Statistics
@@ -42,7 +43,7 @@ Hypotheses:
 
 | mean_proc_min| sd_proc_min| mean_abl_min| sd_abl_min| mean_irrigation| sd_irrigation|
 |-------------:|-----------:|------------:|----------:|---------------:|-------------:|
-|      229.8571|    84.86937|      32.5875|   18.87275|        398.5714|      192.4383|
+|      229.8571|    84.86937|       32.676|   17.10977|        384.3333|      170.2548|
 
 </div>
 
@@ -113,5 +114,5 @@ Make temporary mapping data.
 
 
 ```
-## [1] "Tue Sep 24 09:25:33 2024"
+## [1] "Mon Oct 21 14:31:37 2024"
 ```
