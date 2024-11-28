@@ -23,6 +23,11 @@ rm(list = ls(all.names = TRUE))
 raw_data_dir <- "data/processed/imported_efficiency_stats.RData"
 ```
 
+## Import the working data from the Procedural Summaries
+
+```{r}
+load("~/R_Projects/VCAS_Procedural_Summaries/data/processed/working_stats.RData")
+```
 
 ## Import Subject Data
 ```{r}
@@ -47,16 +52,23 @@ Drop 1-010 dwell time data because this is just catheter in/out and doesn't acco
 
 ```{r}
 cleaned_res <- cleaned_res |>
-  filter(id != "1-011") |> 
-  mutate(dwell_time = replace(dwell_time, id == "1-010", NA))
+  filter(subjectId != "1-011") |> 
+  mutate(dwell_time = replace(dwell_time, subjectId == "1-010", NA))
+```
+
+# REMOVE PROCEDURE TIME - We will use the GLG data for this, not your own
+
+```{r}
+cleaned_res <- cleaned_res |>
+  select(-procedure_time)
 ```
 
 # Change Column Types
 
-## Remove leading "1-" from each id name and convert to numeric scale
+## Convert to factor
 ```{r}
 cleaned_res <- cleaned_res |>
-  mutate(id = as.numeric(str_remove(id, "^1-")))
+  mutate(subjectId = factor(subjectId))
 ```
 
 ## Calculate derived statistics
@@ -67,14 +79,21 @@ proc_vs_rove is ratio of procedure time to rove time, bigger is better.
 ```{r}
 cleaned_res <- cleaned_res |>
   mutate(
-    procedure_time_min = procedure_time/60,
+ #   procedure_time_min = procedure_time/60,
     rove_time_min = rove_time/60,
-    proc_vs_rove = procedure_time/rove_time,
+#    proc_vs_rove = procedure_time/rove_time,
     app_per_rove = num_applications/rove_time_min,
     across(where(is.numeric), \(x) round(x, 2)),
     irrigation_delivered = (dwell_time/60)*6
   ) 
 ```
+
+### Use GLG timestamps for sites where we don't have footage to calculate dwell time
+
+```{r}
+
+```
+
 
 # Save cleaned data
 
