@@ -1,0 +1,137 @@
+---
+title: "help"
+output: html_document
+date: "2024-12-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# This pulls the rows from dat_f14_index_procedure_for_vt from NOT the Homolce site (i.e., IKEM etc.) - to_insert
+
+to_insert_og <- 
+  cleaned_dat_list$dat_f14_index_procedure_for_vt |>
+  filter(!str_starts(subjectId, "1-")) |>
+  rename(dwell_time_min = ablationcathetertime) |>
+  mutate(dwell_time = dwell_time_min * 60) |>
+  select(subjectId, dwell_time_min, dwell_time)
+```
+
+```{r}
+to_be_replaced_og <- cleaned_res |>
+  filter(!str_starts(subjectId, "1-")) |>
+  select(subjectId, dwell_time:etiology) 
+```
+
+We just realized that we're trying to match on different key classes
+
+> class(to_insert_og$subjectId)
+[1] "factor"
+> class(to_be_replaced_og$subjectId)
+[1] "character"
+
+# Anonymize Data
+
+```{r}
+to_be_replaced <- structure(list(id = c("20", "21", "22", "23"
+), df = c(NA_real_, NA_real_, NA_real_, NA_real_), factor = c("a", 
+"a", "a", "a")), row.names = c(NA, -4L), class = c("tbl_df", 
+"tbl", "data.frame"))
+```
+
+```{r}
+to_insert <- structure(list(id = structure(20:23, levels = c("1", 
+"2", "3", "4", "5", "6", "7", "8", 
+"9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"), class = "factor"), df_min = c(1000, 1450, NA, NA
+), df = c(60000, 90000, NA, NA)), row.names = c(NA, -4L), class = c("tbl_df", 
+"tbl", "data.frame"))
+```
+
+
+# First Attempt - Use "replace"
+
+```{r}
+# This doesn't work
+test_1.1 <- to_be_replaced |>
+  mutate(df = replace(df, id == "20" | id == "21", to_insert[,"df"]))
+```
+
+```{r}
+# This works but throws an error?
+test_1.2 <- to_be_replaced |>
+  mutate(df = replace(df, id == "20" | id == "21", to_insert$df))
+```
+
+# Second Attempt - Use "match"
+
+In the future, we'll need to replace NAs from the Homolce dataset with values from the GLG source. This HAS to work
+
+```{r}
+#to_be_replaced = df
+#df[match(to_insert$key, df$key), match(names(to_insert), names(df))] <- to_insert
+#df
+```
+
+## Test to see if changing data types fixes all this - This did not
+
+```{r}
+#to_be_replaced <- to_be_replaced |> mutate(id = as.character(id))
+#to_insert <- to_insert |> mutate(id = as.character(id))
+```
+
+```{r}
+#to_be_replaced[match(to_insert$id, to_be_replaced$id), match(names(to_insert), names(to_be_replaced))] <- to_insert
+```
+
+
+```{r}
+# This resets the order of subjectId
+#tmp2 <- tmp[match(cleaned_res$subjectId, tmp$subjectId), ]
+```
+
+# For Loop
+
+```{r}
+# Make an empty vector to hold the results
+tmp <- vector()
+```
+
+```{r}
+# This works!
+for(i in seq_along(1:length(res))) {
+  tmp <- to_be_replaced_og[i,"subjectId"]
+  to_be_replaced_og[to_be_replaced_og$subjectId == paste(tmp[[1]]),"dwell_time"] <- to_insert_og[to_insert_og$subjectId == paste(tmp[[1]]),"dwell_time"]
+}
+```
+
+## Let's test with a different df
+
+```{r}
+for(i in seq_along(1:length(res))) {
+  tmp <- to_be_replaced[i,"id"]
+  to_be_replaced[to_be_replaced$id == paste(tmp[[1]]),"df"] <- to_insert[to_insert$id == paste(tmp[[1]]),"df"]
+}
+```
+
+## Final Test
+
+```{r}
+id_to_replace <- cleaned_res |>
+  filter(!str_starts(subjectId, "1-")) |> select(subjectId)
+
+# These are the non-Homolce data for dwell time
+dwell_to_insert <- 
+  cleaned_dat_list$dat_f14_index_procedure_for_vt |>
+  filter(subjectId %in% id_to_replace$subjectId) |>
+  rename(dwell_time_min = ablationcathetertime) |>
+  mutate(dwell_time = dwell_time_min * 60) |>
+  select(subjectId, dwell_time_min, dwell_time)
+
+for(i in seq_along(1:nrow(id_to_replace))) {
+  tmp <- id_to_replace[i,"subjectId"]
+  cleaned_res[cleaned_res$subjectId == paste(tmp[[1]]),"dwell_time"] <- dwell_to_insert[dwell_to_insert$subjectId == paste(tmp[[1]]),"dwell_time"]
+}
+```
+

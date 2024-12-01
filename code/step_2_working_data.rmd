@@ -73,27 +73,46 @@ cleaned_res <- cleaned_res |>
 
 ## Calculate derived statistics
 
+### Use GLG timestamps for sites where we don't have footage to calculate dwell time
+
+```{r}
+# Identify all the non-Homolce VCAS data
+id_to_replace <- cleaned_res |>
+  filter(!str_starts(subjectId, "1-")) |> select(subjectId)
+
+# These are the non-Homolce data for dwell time from GLG
+dwell_to_insert <- 
+  cleaned_dat_list$dat_f14_index_procedure_for_vt |>
+  filter(subjectId %in% id_to_replace$subjectId) |>
+  # We derive ablationcathetertime in the procedural summaries workflow
+  rename(dwell_time_min = ablationcathetertime) |>
+  mutate(dwell_time = dwell_time_min * 60) |>
+  select(subjectId, dwell_time_min, dwell_time)
+
+# Iteratively replace the cleaned_res dwell_time data with the one from GLG from the non-Homolce
+for(i in seq_along(1:nrow(id_to_replace))) {
+  tmp <- id_to_replace[i,"subjectId"]
+  cleaned_res[cleaned_res$subjectId == paste(tmp[[1]]),"dwell_time"] <- dwell_to_insert[dwell_to_insert$subjectId == paste(tmp[[1]]),"dwell_time"]
+}
+```
+
+### Do the math
+
 app_per_rove is how many applications we can get in within a minute of rove_time, bigger is better
 proc_vs_rove is ratio of procedure time to rove time, bigger is better. 
 
 ```{r}
 cleaned_res <- cleaned_res |>
   mutate(
+    dwell_time_min = dwell_time/60,
  #   procedure_time_min = procedure_time/60,
     rove_time_min = rove_time/60,
 #    proc_vs_rove = procedure_time/rove_time,
-    app_per_rove = num_applications/rove_time_min,
+    app_per_rove = numberapplications/rove_time_min,
     across(where(is.numeric), \(x) round(x, 2)),
     irrigation_delivered = (dwell_time/60)*6
   ) 
 ```
-
-### Use GLG timestamps for sites where we don't have footage to calculate dwell time
-
-```{r}
-
-```
-
 
 # Save cleaned data
 
