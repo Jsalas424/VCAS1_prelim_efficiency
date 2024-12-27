@@ -34,51 +34,42 @@ load("~/R_Projects/VCAS_Procedural_Summaries/data/processed/working_stats.RData"
 load(raw_data_dir)
 ```
 
-# Remove Empty Rows 
-
-If the only thing populated is the ID, remove it
-
-```{r}
-#temp <- cleaned_res
-#cleaned_res <- janitor::remove_empty(temp[, -1], which = "rows") |>
-#  left_join(temp) |>
-#  relocate(id)
-```
-
-# Exclude Patients
-
-Exclude 1-011, procedure was aborted for safety reasons 
-Drop 1-010 dwell time data because this is just catheter in/out and doesn't account for all the times we actually swap the catheter in and out
+# Label data according to studyid
 
 ```{r}
 cleaned_res <- cleaned_res |>
-  filter(subjectId != "1-011") |> 
-  mutate(dwell_time = replace(dwell_time, subjectId == "1-010", NA))
-```
-
-# REMOVE PROCEDURE TIME - We will use the GLG data for this, not your own
-
-```{r}
-cleaned_res <- cleaned_res |>
-  select(-procedure_time)
+  mutate(studyID = if_else(
+    etiology == "idiopathic", "VCAS-II", "VCAS-I"
+  ))
 ```
 
 # Change Column Types
 
 ## Convert to factor
+
 ```{r}
 cleaned_res <- cleaned_res |>
   mutate(subjectId = factor(subjectId))
 ```
 
-## Calculate derived statistics
+# Grab numberapplications from GLG data
+
+```{r}
+cleaned_res <- full_join(
+  cleaned_dat_list$dat_f14_index_procedure_for_vt |>
+    select(subjectId, numberapplications, numberlesions),
+  cleaned_res
+)
+```
+
+# Calculate derived statistics
 
 ### Use GLG timestamps for sites where we don't have footage to calculate dwell time
 
 ```{r}
-# Identify all the non-Homolce VCAS data
+# Identify all the non-Homolce VCAS data AND/OR Homolce data that we want to use GLG stuff for instead
 id_to_replace <- cleaned_res |>
-  filter(!str_starts(subjectId, "1-")) |> select(subjectId)
+  filter(!str_starts(subjectId, "1-") | subjectId == "1-010") |> select(subjectId)
 
 # These are the non-Homolce data for dwell time from GLG
 dwell_to_insert <- 
@@ -96,22 +87,53 @@ for(i in seq_along(1:nrow(id_to_replace))) {
 }
 ```
 
-### Do the math
+## Ablation Time for 1-009
 
-app_per_rove is how many applications we can get in within a minute of rove_time, bigger is better
-proc_vs_rove is ratio of procedure time to rove time, bigger is better. 
+We don't have footage or ablation timestamps for 1-009 so we're going to calculate ablation time manually
 
 ```{r}
+# We know that the first application was delivered at "11:49:56" and that's corroborated bewteen footage and Michelle's hand taken records. So we will calculate difference between first application and catheter out time
+#11:49:56
+tmp <- cleaned_res |>
+  filter(subjectId == "1-009") |>
+  mutate(rove_time = as.numeric(cleaned_dat_list$dat_f14_index_procedure_for_vt[cleaned_dat_list$dat_f14_index_procedure_for_vt$subjectId == "1-009", "ablationcatheteroutofbodytime"][[1]] - lubridate::as.period(hms::as_hms("11:49:56"))))
+
+cleaned_res <- cleaned_res |>
+  filter(subjectId != "1-009") |>
+  rbind(tmp)
+```
+
+### Do the math
+
+```{r}
+#app_per_rove is how many applications we can get in within a minute of rove_time
 cleaned_res <- cleaned_res |>
   mutate(
-    dwell_time_min = dwell_time/60,
- #   procedure_time_min = procedure_time/60,
-    rove_time_min = rove_time/60,
-#    proc_vs_rove = procedure_time/rove_time,
-    app_per_rove = numberapplications/rove_time_min,
-    across(where(is.numeric), \(x) round(x, 2)),
-    irrigation_delivered = (dwell_time/60)*6
+    dwell_time_min = dwell_time / 60,
+    rove_time_min = rove_time / 60,
+    app_per_rove = numberapplications / rove_time_min, 
+    irrigation_delivered = (dwell_time / 60) * 6,
+    energy_on_time = case_when(
+      therapy == "15kv_20x5_uni"
+      ~ (numberapplications * 150) / 1000,
+      therapy == "15kv_3x12_uni"
+      ~ (numberapplications * 150) / 1000
+    ),
+    across(where(is.numeric), \(x) round(x, 2))
   ) 
+```
+
+# Set data to NA for patient's that didn't complete the study
+
+```{r}
+tmp <- cleaned_res |>
+  filter(subjectId == "1-011" | subjectId == "1-021") |>
+  mutate(across(numberapplications:dwell_time, ~ case_match(.x, .x ~ NA)))
+
+cleaned_res <- cleaned_res |>
+  filter(subjectId != "1-011", subjectId != "1-021") |>
+  rbind(tmp) |>
+  arrange(subjectId)
 ```
 
 # Save cleaned data
