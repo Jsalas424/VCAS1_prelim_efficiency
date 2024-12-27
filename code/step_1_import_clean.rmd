@@ -21,7 +21,7 @@ rm(list = ls(all.names = TRUE)) # Remove all starting code
 # Import the raw data - Point to the correct raw data directory
 
 ```{r}
-raw_data_dir <- "data/raw/VCAS-I-rove_time.xlsx"
+raw_data_dir <- "data/raw/VCAS-rove_time.xlsx"
 ```
 
 # Excel import
