@@ -1,5 +1,5 @@
 ---
-title: "Modify Raw Imported Data"
+title: "Modify Raw Imported Data: Procedural Analysis Set"
 author: "Jonathan Salas"
 date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
@@ -7,6 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(dplyr)
+library(janitor)
+library(hms)
+library(lubridate)
 library(stringr)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
 ```
@@ -23,16 +26,29 @@ rm(list = ls(all.names = TRUE))
 raw_data_dir <- "data/processed/imported_efficiency_stats.RData"
 ```
 
-## Import the working data from the Procedural Summaries
-
-```{r}
-load("~/R_Projects/VCAS_Procedural_Summaries/data/processed/working_stats.RData")
-```
-
 ## Import Subject Data
+
 ```{r}
 load(raw_data_dir)
 ```
+
+# Pick your patients
+
+```{r}
+cleaned_dat_list <- lapply(dat_list, function(x)
+  x |> filter(
+         subjectId != "1-021", #screen failure
+         subjectId != "1-011"
+         ))
+
+cleaned_res <- cleaned_res |>
+  filter(
+         subjectId != "1-021", #screen failure
+         subjectId != "1-011"
+         )
+```
+
+See bottom of the sheet for where we "pick" our patients even more! There has to be some filtering done AFTER we merge in the VCAS-I Index procedure data
 
 # Label data according to studyid
 
@@ -45,11 +61,11 @@ cleaned_res <- cleaned_res |>
 
 # Change Column Types
 
-## Convert to factor
+## Clean Column Names
 
 ```{r}
-cleaned_res <- cleaned_res |>
-  mutate(subjectId = factor(subjectId))
+cleaned_headers_list <- headers_list |> clean_names()
+cleaned_dat_list <- dat_list |> clean_names()
 ```
 
 # Grab numberapplications from GLG data
@@ -63,6 +79,27 @@ cleaned_res <- full_join(
 ```
 
 # Calculate derived statistics
+
+### Calculate timestamps
+
+## Calculate time data
+
+mapping duration
+Total procedure duration = "vascular access" to "removal of study catheter from body"
+Procedure time = "catheter in for mapping" to "removal of study catheter from body"
+FieldForce catheter time in body
+Ablation time - retrieve from our separate code
+
+```{r}
+cleaned_dat_list$dat_f14_index_procedure_for_vt <- cleaned_dat_list$dat_f14_index_procedure_for_vt |>
+  mutate(
+    # Convert data from character to time
+    ablationcatheteroutofbodytime = hm(ablationcatheteroutofbodytime),
+    ablationcatheterenterbodytime = hm(ablationcatheterenterbodytime),
+    # Compute time differences
+    ablationcathetertime = as.numeric(as.duration(ablationcatheteroutofbodytime - ablationcatheterenterbodytime),"minutes")
+  ) 
+```
 
 ### Use GLG timestamps for sites where we don't have footage to calculate dwell time
 
@@ -123,17 +160,37 @@ cleaned_res <- cleaned_res |>
   ) 
 ```
 
-# Set data to NA for patient's that didn't complete the study
+## Convert to factor
 
 ```{r}
-tmp <- cleaned_res |>
-  filter(subjectId == "1-011" | subjectId == "1-021") |>
-  mutate(across(numberapplications:dwell_time, ~ case_match(.x, .x ~ NA)))
+cleaned_res <- cleaned_res |>
+  mutate(subjectId = factor(subjectId))
+```
+
+```{r}
+cleaned_dat_list <-
+  lapply(cleaned_dat_list,
+         function(x)
+           x |> mutate(subjectId = factor(subjectId, levels = levels(cleaned_res$subjectId)))
+  )
+```
+
+# Pick your patients
+
+This is currently at the top but it's likely redundant and we really need it here 
+
+```{r}
+cleaned_dat_list <- lapply(dat_list, function(x)
+  x |> filter(
+         subjectId != "1-021", #screen failure
+         subjectId != "1-011"
+         ))
 
 cleaned_res <- cleaned_res |>
-  filter(subjectId != "1-011", subjectId != "1-021") |>
-  rbind(tmp) |>
-  arrange(subjectId)
+  filter(
+         subjectId != "1-021", #screen failure
+         subjectId != "1-011"
+         )
 ```
 
 # Save cleaned data

@@ -22,17 +22,70 @@ rm(list = ls(all.names = TRUE)) # Remove all starting code
 
 ```{r}
 raw_data_dir <- "data/raw/VCAS-rove_time.xlsx"
+raw_data_dir_2 <- "data/raw/FormBased_FieldMedicalPFAStudy.xlsx"
 ```
 
 # Excel import
 
-## Import Subject Data
+## Import GLG index procedure data
+
+## Import Data Headers
+
+```{r}
+# Return the sheetnames from the excel raw data doc
+headers_sheetnames <-
+  readxl::excel_sheets(raw_data_dir_2)
+
+# Return the sheetnames from the excel raw data doc
+headers_list <-
+  lapply(headers_sheetnames, readxl::read_excel, path = raw_data_dir_2, n_max = 2)
+
+# name the dataframes
+names(headers_list) <- paste0("headers_",headers_sheetnames)
+```
+
+### Remove Empty Rows
+
+```{r}
+headers_list <- lapply(headers_list, janitor::remove_empty, "rows")
+```
+
+## Import Data Content
+
+```{r}
+# Return the sheetnames from the excel raw data doc
+dat_sheetnames <-
+  readxl::excel_sheets(raw_data_dir_2)
+
+# Return the sheetnames from the excel raw data doc
+dat_list <-
+  lapply(
+    dat_sheetnames,
+    readxl::read_excel,
+    path = raw_data_dir_2,
+    skip = 2,
+    na = c(".h", ".b", ".ns", ".n", ".e")
+  ) 
+
+# name the dataframes
+names(dat_list) <- paste0("dat_",dat_sheetnames)
+```
+
+### Remove Empty Rows
+
+```{r}
+dat_list <- lapply(dat_list, janitor::remove_empty, "rows")
+```
+
+## Import our handwriten rove-time data
+
+### Import Subject Data
 ```{r}
 raw_res <- read_excel(path = raw_data_dir,
                       sheet = "results")
 ```
 
-## Remove Empty Rows
+### Remove Empty Rows
 
 ```{r}
 cleaned_res <- janitor::remove_empty(raw_res, which = "rows") |> select(-c(link_to_data, notes))
@@ -42,6 +95,8 @@ cleaned_res <- janitor::remove_empty(raw_res, which = "rows") |> select(-c(link_
 
 ```{r}
 save(cleaned_res, 
+     dat_list,
+     headers_list,
      file = paste0("data/processed/imported_efficiency_stats.RData"))
 ```
 
