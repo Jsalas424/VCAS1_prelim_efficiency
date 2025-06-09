@@ -38,13 +38,13 @@ load(raw_data_dir)
 cleaned_dat_list <- lapply(dat_list, function(x)
   x |> filter(
          subjectId != "1-021", #screen failure
-         subjectId != "1-011"
+         subjectId != "1-011" # death - excluded from procedural analysis set
          ))
 
 cleaned_res <- cleaned_res |>
   filter(
          subjectId != "1-021", #screen failure
-         subjectId != "1-011"
+         subjectId != "1-011" # death - excluded from procedural analysis set
          )
 ```
 
