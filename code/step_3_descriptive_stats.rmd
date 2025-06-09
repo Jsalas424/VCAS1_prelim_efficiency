@@ -1,5 +1,5 @@
 ---
-title: "VCAS-I Efficiency"
+title: "VCAS-I Efficiency: Procedural Analysis Set"
 author: "Jonathan Salas"
 date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -45,12 +45,6 @@ Analysis Plan:
 - box plots
 - we do procedure time vs rove time "proc_vs_rove" 
 
-Hypotheses:
-
-1) rove_per_app and rove_vs_proc with x axis as patient number to hopefully show a decreasing trend for both; i.e., you can 
-  do lots of applications in a short period of time & ablation time is small relative to procedure time as the physician
-  becomes more comfortable with our system
-  
 ## The numbers
 
 ```{r}
@@ -67,6 +61,25 @@ cleaned_res |>
   ) |>
   add_n() |>
   add_overall() |>
+  as_gt()
+```
+
+### VCAS-I Only
+
+```{r}
+cleaned_res |>
+  select(-c(subjectId)) |>
+  filter(studyID == "VCAS-I") |>
+  tbl_summary(
+    by = studyID,
+    type = where(is.numeric) ~ "continuous2",
+    statistic = list(
+      all_continuous2() ~ c("{mean} ({sd})", "{median} [{p25}-{p75}]", "{min}, {max}"),
+      all_categorical() ~ "{n} ({p}%)",
+      missing_text = "NA"
+    )
+  ) |>
+  add_n() |>
   as_gt()
 ```
 
@@ -138,7 +151,7 @@ ggsave(
   plot = plot + theme_half_open(font_size = 34),
   path = "figures",
   scale = 1,
-  width = 18,
+  width = 12,
   height = 21,
   units = "cm",
   dpi = 300,
@@ -198,7 +211,7 @@ ggsave("ablation_time_boxplot.png",
        plot = plot + theme_half_open(font_size = 34),
        path = "figures",
        scale = 1,
-       width = 18,
+       width = 12,
        height = 21,
        units = "cm",
        dpi = "retina",
