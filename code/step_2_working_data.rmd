@@ -35,17 +35,22 @@ load(raw_data_dir)
 # Pick your patients
 
 ```{r}
+# These patients are excluded from the efficiency analysis set 
+vt_efficiency_analyses_exclusions <- c(
+  "1-001", # Procedural failure, excluded from efficiency analysis set
+  "1-011", # Procedural failure, excluded from efficiency analysis set
+  "1-021", # Screen failure, had RV/LV voltage mapping and no ablation
+  "3-007" # Screen failure, discovered to be ICD dependent on the table 
+)
+```
+
+
+```{r}
 cleaned_dat_list <- lapply(dat_list, function(x)
-  x |> filter(
-         subjectId != "1-021", #screen failure
-         subjectId != "1-011" # death - excluded from procedural analysis set
-         ))
+  x |> filter(!(subjectId %in% vt_efficiency_analyses_exclusions)))
 
 cleaned_res <- cleaned_res |>
-  filter(
-         subjectId != "1-021", #screen failure
-         subjectId != "1-011" # death - excluded from procedural analysis set
-         )
+  filter(!(subjectId %in% vt_efficiency_analyses_exclusions))
 ```
 
 See bottom of the sheet for where we "pick" our patients even more! There has to be some filtering done AFTER we merge in the VCAS-I Index procedure data
@@ -65,7 +70,7 @@ cleaned_res <- cleaned_res |>
 
 ```{r}
 cleaned_headers_list <- headers_list |> clean_names()
-cleaned_dat_list <- dat_list |> clean_names()
+cleaned_dat_list <- cleaned_dat_list |> clean_names()
 ```
 
 # Grab numberapplications from GLG data
@@ -106,6 +111,7 @@ cleaned_dat_list$dat_f14_index_procedure_for_vt <- cleaned_dat_list$dat_f14_inde
 ```{r}
 # Identify all the non-Homolce VCAS data AND/OR Homolce data that we want to use GLG stuff for instead
 id_to_replace <- cleaned_res |>
+  # We want to exclude the homolka data except for 1-010, we do want to use GLG to impute for 1-010
   filter(!str_starts(subjectId, "1-") | subjectId == "1-010") |> select(subjectId)
 
 # These are the non-Homolce data for dwell time from GLG
@@ -180,17 +186,17 @@ cleaned_dat_list <-
 This is currently at the top but it's likely redundant and we really need it here 
 
 ```{r}
-cleaned_dat_list <- lapply(dat_list, function(x)
-  x |> filter(
-         subjectId != "1-021", #screen failure
-         subjectId != "1-011"
-         ))
+#cleaned_dat_list <- lapply(dat_list, function(x)
+#  x |> filter(
+#         subjectId != "1-021", #screen failure
+#         subjectId != "1-011"
+#         ))
 
-cleaned_res <- cleaned_res |>
-  filter(
-         subjectId != "1-021", #screen failure
-         subjectId != "1-011"
-         )
+#cleaned_res <- cleaned_res |>
+#  filter(
+#         subjectId != "1-021", #screen failure
+#         subjectId != "1-011"
+#         )
 ```
 
 # Save cleaned data
