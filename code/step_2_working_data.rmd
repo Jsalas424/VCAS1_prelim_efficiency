@@ -5,6 +5,20 @@ date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+# Start with a clean slate
+
+## Remove all objects
+
+```{r echo = F, include=FALSE}
+rm(list = ls(all.names = TRUE)) # Remove all starting code
+```
+
+## Detach Packages
+
+```{r include=FALSE}
+try(invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)), silent = T) # Detach Packages
+```
+
 ```{r setup, include=FALSE}
 library(dplyr)
 library(janitor)
@@ -12,12 +26,6 @@ library(hms)
 library(lubridate)
 library(stringr)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
-```
-
-# Start with a clean slate
-
-```{r echo = F}
-rm(list = ls(all.names = TRUE))
 ```
 
 # Import the raw data - Point to the correct raw data directory
@@ -35,10 +43,10 @@ load(raw_data_dir)
 # Pick your patients
 
 ```{r}
-# These patients are excluded from the efficiency analysis set 
+# These patients are excluded from the procedural analysis set 
 vt_efficiency_analyses_exclusions <- c(
-  "1-001", # Procedural failure, excluded from efficiency analysis set
-  "1-011", # Procedural failure, excluded from efficiency analysis set
+  "1-001", # Procedural failure, in safety analysis but excluded from efficiency analysis set
+  "1-011", # Procedural failure, in safety analysis but excluded from efficiency analysis set
   "1-021", # Screen failure, had RV/LV voltage mapping and no ablation
   "3-007" # Screen failure, discovered to be ICD dependent on the table 
 )
@@ -219,12 +227,6 @@ paste0(
 subset(data.frame(sessioninfo::package_info()),
        attached == TRUE,
        c(package, loadedversion)) # Loaded Packages
-```
-
-# Detach Packages before moving on
-
-```{r}
-invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
 ```
 
 # When were these files last rewritten?

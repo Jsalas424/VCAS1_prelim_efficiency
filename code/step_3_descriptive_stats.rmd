@@ -9,6 +9,20 @@ output:
     keep_md: true
 ---
 
+# Start with a clean slate
+
+## Remove all objects
+
+```{r echo = F, include=FALSE}
+rm(list = ls(all.names = TRUE)) # Remove all starting code
+```
+
+## Detach Packages
+
+```{r include=FALSE}
+try(invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)), silent = T) # Detach Packages
+```
+
 ```{r setup, include = FALSE}
 library(gtsummary)
 library(MASS)
@@ -17,12 +31,6 @@ library(cowplot)
 library(dplyr)
 knitr::opts_chunk$set(echo = F)
 knitr::opts_knit$set(root.dir = "~/R_Projects/VCAS1_prelim_efficiency")
-```
-
-# Start with a clean slate
-
-```{r echo = F}
-rm(list = ls(all.names = TRUE))
 ```
 
 # Import - Point to the correct raw data directory
@@ -49,7 +57,10 @@ Analysis Plan:
 
 ```{r}
 cleaned_res |>
-  select(-c(subjectId)) |>
+  select(-c(subjectId, dwell_time, rove_time, 
+            # Correct etiologies found in medical history, not the Rove time sheet
+            etiology
+            )) |>
   tbl_summary(
     by = studyID,
     type = where(is.numeric) ~ "continuous2",
@@ -68,7 +79,10 @@ cleaned_res |>
 
 ```{r}
 cleaned_res |>
-  select(-c(subjectId)) |>
+  select(-c(subjectId, dwell_time, rove_time, 
+            # Correct etiologies found in medical history, not the Rove time sheet
+            etiology
+            )) |>
   filter(studyID == "VCAS-I") |>
   tbl_summary(
     by = studyID,
@@ -338,12 +352,6 @@ paste0(
 subset(data.frame(sessioninfo::package_info()),
        attached == TRUE,
        c(package, loadedversion)) # Loaded Packages
-```
-
-# Detach Packages before moving on
-
-```{r}
-invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
 ```
 
 # When were these files last rewritten?

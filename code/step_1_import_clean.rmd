@@ -5,6 +5,20 @@ date: "Last Updated `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+# Start with a clean slate
+
+## Remove all objects
+
+```{r echo = F, include=FALSE}
+rm(list = ls(all.names = TRUE)) # Remove all starting code
+```
+
+## Detach Packages
+
+```{r include=FALSE}
+try(invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)), silent = T) # Detach Packages
+```
+
 ```{r setup, include=FALSE}
 library(readxl)
 library(janitor)
@@ -19,6 +33,8 @@ rm(list = ls(all.names = TRUE)) # Remove all starting code
 ```
 
 # Import the raw data - Point to the correct raw data directory
+
+DONT FORGET TO UPDATE THE INDEX PROCEDURE SHEET!
 
 ```{r}
 raw_data_dir <- "data/raw/VCAS-rove_time.xlsx"
@@ -113,12 +129,6 @@ paste0(
 subset(data.frame(sessioninfo::package_info()),
        attached == TRUE,
        c(package, loadedversion)) # Loaded Packages
-```
-
-# Detach Packages before moving on
-
-```{r}
-invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE)) # Detach Packages
 ```
 
 # When were these files last rewritten?
